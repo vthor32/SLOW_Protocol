@@ -1,5 +1,4 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/slow_peripheral.dir/link.d"
   "CMakeFiles/slow_peripheral.dir/src/main.cpp.o"
   "CMakeFiles/slow_peripheral.dir/src/main.cpp.o.d"
   "slow_peripheral"

@@ -3,73 +3,107 @@
 #include <cstdint>
 #include <vector>
 #include <stdexcept>
+#include <array>
+#include <algorithm>
+#include <cstring>
 
-// Constantes de flags
-enum Flags : uint8_t {
-    FLAG_CONNECT = 0x01,
-    FLAG_DATA    = 0x02,
-    FLAG_ACK     = 0x04,
-    FLAG_CLOSE   = 0x08
+// Define as flags do protocolo SLOW, conforme especificação no PDF.
+enum SlowFlags : uint8_t {
+    FLAG_CONNECT       = 1 << 0, // C - Connect: pacote de início de 3-way connect
+    FLAG_REVIVE        = 1 << 1, // R - Revive: pacote de 0-way connect
+    FLAG_ACK           = 1 << 2, // ACK - Ack: confirma o recebimento de um pacote
+    FLAG_ACCEPT_REJECT = 1 << 3, // A/R - Accept/Reject: aceita ou rejeita uma conexão
+    FLAG_MORE_BITS     = 1 << 4  // MB - More Bits: indica que o pacote foi fragmentado
 };
 
-// Estrutura de pacote SLOW com campos fixos e payload variável
+// Representa um pacote SLOW, seguindo o diagrama da especificação.
+// O cabeçalho completo tem 32 bytes.
 struct SLOWPacket {
-    uint16_t sid;       // Session ID (UUID truncado)
-    uint8_t flags;      // Flags (CONNECT, DATA, ACK, etc.)
-    uint8_t sttl;       // TTL (time-to-live)
-    uint16_t seq_num;   // Número de sequência
-    uint16_t ack_num;   // Acknowledgment number
-    uint16_t window;    // Tamanho da janela
-    uint32_t fid;       // File ID ou stream ID
-    uint32_t fo;        // File offset ou payload offset
-    std::vector<uint8_t> payload;
+    std::array<uint8_t, 16> sid; // 128 bits
+    uint8_t  flags;              // 5 bits
+    uint32_t sttl;               // 27 bits
+    uint32_t seqnum;             // 32 bits
+    uint32_t acknum;             // 32 bits
+    uint16_t window;             // 16 bits
+    uint8_t  fid;                // 8 bits
+    uint8_t  fo;                 // 8 bits
+    std::vector<uint8_t> data;   // até 1440 bytes
 
-    // Serializa struct em buffer de bytes (big endian)
+    // Serializa o pacote para um buffer de bytes em little-endian.
     std::vector<uint8_t> serialize() const {
         std::vector<uint8_t> buf;
-        buf.reserve(2+1+1+2+2+2+4+4 + payload.size());
-        auto append16 = [&](uint16_t v){ buf.push_back(v >> 8); buf.push_back(v & 0xFF); };
-        auto append32 = [&](uint32_t v){
-            buf.push_back((v >> 24) & 0xFF);
-            buf.push_back((v >> 16) & 0xFF);
-            buf.push_back((v >> 8) & 0xFF);
-            buf.push_back(v & 0xFF);
-        };
-        append16(sid);
-        buf.push_back(flags);
-        buf.push_back(sttl);
-        append16(seq_num);
-        append16(ack_num);
-        append16(window);
-        append32(fid);
-        append32(fo);
-        buf.insert(buf.end(), payload.begin(), payload.end());
+        buf.reserve(32 + data.size());
+
+        // 1. SID (128 bits / 16 bytes)
+        buf.insert(buf.end(), sid.begin(), sid.end());
+
+        // 2. Flags (5 bits) + STTL (27 bits) empacotados em 32 bits
+        uint32_t flags_sttl = (sttl << 5) | (flags & 0x1F);
+        for(int i = 0; i < 4; ++i) {
+            buf.push_back((flags_sttl >> (i * 8)) & 0xFF); // Little-endian
+        }
+
+        // 3. Seqnum (32 bits)
+        for(int i = 0; i < 4; ++i) {
+            buf.push_back((seqnum >> (i * 8)) & 0xFF); // Little-endian
+        }
+
+        // 4. Acknum (32 bits)
+        for(int i = 0; i < 4; ++i) {
+            buf.push_back((acknum >> (i * 8)) & 0xFF); // Little-endian
+        }
+
+        // 5. Window (16 bits) + FID (8 bits) + FO (8 bits) empacotados em 32 bits
+        uint32_t win_fid_fo = (static_cast<uint32_t>(window) << 16) | (static_cast<uint32_t>(fid) << 8) | fo;
+        for(int i = 0; i < 4; ++i) {
+            buf.push_back((win_fid_fo >> (i * 8)) & 0xFF); // Little-endian
+        }
+
+        // 6. Data
+        buf.insert(buf.end(), data.begin(), data.end());
+
         return buf;
     }
 
-    // Converte buffer de bytes em SLOWPacket (big endian)
+    // Desserializa um buffer de bytes para um objeto SLOWPacket.
     static SLOWPacket deserialize(const std::vector<uint8_t>& buf) {
-        if (buf.size() < 18) // cabeçalho mínimo
-            throw std::runtime_error("Buffer muito pequeno para SLOWPacket");
+        if (buf.size() < 32) {
+            throw std::runtime_error("Buffer muito pequeno para o cabeçalho SLOW (mínimo 32 bytes)");
+        }
+        
         SLOWPacket pkt;
-        size_t i = 0;
-        auto read16 = [&](void)->uint16_t {
-            uint16_t v = (buf[i] << 8) | buf[i+1]; i += 2; return v;
-        };
-        auto read32 = [&](void)->uint32_t {
-            uint32_t v = (buf[i] << 24) | (buf[i+1] << 16) | (buf[i+2] << 8) | buf[i+3];
-            i += 4; return v;
-        };
-        pkt.sid      = read16();
-        pkt.flags    = buf[i++];
-        pkt.sttl     = buf[i++];
-        pkt.seq_num  = read16();
-        pkt.ack_num  = read16();
-        pkt.window   = read16();
-        pkt.fid      = read32();
-        pkt.fo       = read32();
-        // restante é payload
-        pkt.payload.assign(buf.begin() + i, buf.end());
+        size_t offset = 0;
+
+        // 1. SID
+        std::copy_n(buf.begin(), 16, pkt.sid.begin());
+        offset += 16;
+
+        // 2. Flags + STTL
+        uint32_t flags_sttl = 0;
+        std::memcpy(&flags_sttl, &buf[offset], 4);
+        pkt.flags = flags_sttl & 0x1F;
+        pkt.sttl = flags_sttl >> 5;
+        offset += 4;
+
+        // 3. Seqnum
+        std::memcpy(&pkt.seqnum, &buf[offset], 4);
+        offset += 4;
+
+        // 4. Acknum
+        std::memcpy(&pkt.acknum, &buf[offset], 4);
+        offset += 4;
+
+        // 5. Window + FID + FO
+        uint32_t win_fid_fo = 0;
+        std::memcpy(&win_fid_fo, &buf[offset], 4);
+        pkt.fo = win_fid_fo & 0xFF;
+        pkt.fid = (win_fid_fo >> 8) & 0xFF;
+        pkt.window = (win_fid_fo >> 16) & 0xFFFF;
+        offset += 4;
+
+        // 6. Data
+        pkt.data.assign(buf.begin() + offset, buf.end());
+
         return pkt;
     }
 };
