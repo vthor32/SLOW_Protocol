@@ -185,7 +185,17 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: \
  /usr/include/x86_64-linux-gnu/bits/in.h /usr/include/rpc/netdb.h \
  /usr/include/x86_64-linux-gnu/bits/types/sigevent_t.h \
  /usr/include/x86_64-linux-gnu/bits/types/__sigval_t.h \
- /usr/include/x86_64-linux-gnu/bits/netdb.h \
+ /usr/include/x86_64-linux-gnu/bits/netdb.h /usr/include/c++/14/iomanip \
+ /usr/include/c++/14/locale \
+ /usr/include/c++/14/bits/locale_facets_nonio.h /usr/include/c++/14/ctime \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/time_members.h \
+ /usr/include/x86_64-linux-gnu/c++/14/bits/messages_members.h \
+ /usr/include/libintl.h /usr/include/c++/14/bits/codecvt.h \
+ /usr/include/c++/14/bits/locale_facets_nonio.tcc \
+ /usr/include/c++/14/bits/locale_conv.h \
+ /usr/include/c++/14/bits/quoted_string.h /usr/include/c++/14/sstream \
+ /usr/include/c++/14/bits/sstream.tcc \
+ /usr/include/x86_64-linux-gnu/sys/time.h \
  /home/thunor/Documents/SLOW_Protocol/src/slow_packet.hpp \
  /usr/include/c++/14/cstdint \
  /usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h /usr/include/stdint.h \
