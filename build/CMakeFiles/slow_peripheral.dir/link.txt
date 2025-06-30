@@ -1,1 +1,1 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/slow_peripheral.dir/link.d CMakeFiles/slow_peripheral.dir/src/main.cpp.o -o slow_peripheral
+/usr/bin/c++ CMakeFiles/slow_peripheral.dir/src/main.cpp.o -o slow_peripheral

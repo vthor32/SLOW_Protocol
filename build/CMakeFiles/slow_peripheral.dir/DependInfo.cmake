@@ -8,8 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/thunor/Documents/SLOW_Protocol/src/main.cpp" "CMakeFiles/slow_peripheral.dir/src/main.cpp.o" "gcc" "CMakeFiles/slow_peripheral.dir/src/main.cpp.o.d"
-  "" "slow_peripheral" "gcc" "CMakeFiles/slow_peripheral.dir/link.d"
+  "/home/kali/Documents/SLOW_Protocol/src/main.cpp" "CMakeFiles/slow_peripheral.dir/src/main.cpp.o" "gcc" "CMakeFiles/slow_peripheral.dir/src/main.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.
