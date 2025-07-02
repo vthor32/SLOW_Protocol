@@ -8,11 +8,11 @@
 #include <cstring>
 
 enum SlowFlags : uint8_t {
-    FLAG_CONNECT       = 1 << 0,
-    FLAG_REVIVE        = 1 << 1,
-    FLAG_ACK           = 1 << 2,
-    FLAG_ACCEPT_REJECT = 1 << 3,
-    FLAG_MORE_BITS     = 1 << 4
+    FLAG_MORE_BITS     = 1 << 0, // Valor 1
+    FLAG_ACCEPT_REJECT = 1 << 1, // Valor 2
+    FLAG_ACK           = 1 << 2, // Valor 4
+    FLAG_REVIVE        = 1 << 3, // Valor 8
+    FLAG_CONNECT       = 1 << 4  // Valor 16
 };
 
 struct SLOWPacket {
@@ -27,7 +27,7 @@ struct SLOWPacket {
     std::vector<uint8_t> data;
 
     std::vector<uint8_t> serialize() const {
-        if (data.size() > 1440) { // [cite: 17]
+        if (data.size() > 1440) {
             throw std::runtime_error("O campo 'data' excede o limite máximo de 1440 bytes.");
         }
 
@@ -36,9 +36,8 @@ struct SLOWPacket {
 
         buf.insert(buf.end(), sid.begin(), sid.end());
 
-        // --- CORREÇÃO APLICADA AQUI ---
-        // Conforme o diagrama, flags estão nos bits 0-4 e sttl nos bits 5-31.
-        uint32_t sttl_flags = (sttl << 5) | (flags & 0x1F);
+        // enpacotamento: sttl nos bits altos, flags nos bits baixos.
+        uint32_t sttl_flags = ((sttl & 0x07FFFFFF) << 5) | (flags & 0x1F);
         for (int i = 0; i < 4; ++i) {
             buf.push_back((sttl_flags >> (i * 8)) & 0xFF);
         }
@@ -51,14 +50,14 @@ struct SLOWPacket {
             buf.push_back((acknum >> (i * 8)) & 0xFF);
         }
 
-        // Esta parte já estava correta, pois window está nos bits menos significativos.
-        uint32_t win_fid_fo = (static_cast<uint32_t>(fo) << 24) | (static_cast<uint32_t>(fid) << 16) | window;
+        uint32_t win_fid_fo = (static_cast<uint32_t>(fo) << 24)
+                             | (static_cast<uint32_t>(fid) << 16)
+                             | (window & 0xFFFF);
         for (int i = 0; i < 4; ++i) {
             buf.push_back((win_fid_fo >> (i * 8)) & 0xFF);
         }
 
         buf.insert(buf.end(), data.begin(), data.end());
-
         return buf;
     }
 
@@ -73,11 +72,10 @@ struct SLOWPacket {
         std::copy_n(buf.begin(), 16, pkt.sid.begin());
         offset += 16;
 
-        // --- CORREÇÃO APLICADA AQUI ---
         uint32_t sttl_flags = 0;
         std::memcpy(&sttl_flags, &buf[offset], 4);
         pkt.flags = sttl_flags & 0x1F;
-        pkt.sttl = (sttl_flags >> 5) & 0x07FFFFFF;
+        pkt.sttl  = sttl_flags >> 5;
         offset += 4;
 
         std::memcpy(&pkt.seqnum, &buf[offset], 4);
@@ -94,7 +92,6 @@ struct SLOWPacket {
         offset += 4;
 
         pkt.data.assign(buf.begin() + offset, buf.end());
-
         return pkt;
     }
 };
