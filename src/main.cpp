@@ -1,3 +1,11 @@
+/**
+ * Projeto: SLOW Peripheral Protocol
+ * Autor: Vitor Marçal Brasil
+ * N°USP: 12822653
+ * Curso: Sistemas de Informação - ICMC/USP São Carlos
+ * Data: Julho de 2025
+ */
+
 #include <iostream>
 #include <string>
 #include <vector>
@@ -17,6 +25,7 @@
 constexpr uint16_t DEFAULT_WINDOW_SIZE = 1440;
 constexpr int MAX_DATA_SIZE = 1440;
 
+// Imprime um Session ID em formato UUID padrão para melhor legibilidade.
 void print_sid(const std::array<uint8_t, 16>& sid) {
     std::cout << std::hex << std::setfill('0');
     for (size_t i = 0; i < sid.size(); ++i) {
@@ -26,6 +35,7 @@ void print_sid(const std::array<uint8_t, 16>& sid) {
     std::cout << std::dec << std::setfill(' ');
 }
 
+// Imprime o conteúdo de um buffer de bytes em hexadecimal para depuração.
 void print_bytes(const std::vector<uint8_t>& buf) {
     std::cout << "Serialized (" << buf.size() << " bytes): ";
     for (auto b : buf)
@@ -33,6 +43,7 @@ void print_bytes(const std::vector<uint8_t>& buf) {
     std::cout << std::dec << std::endl;
 }
 
+// Gera um vetor de bytes com conteúdo aleatório para testes de transmissão.
 std::vector<uint8_t> generate_random_data(size_t size) {
     std::vector<uint8_t> data(size);
     srand(time(nullptr));
@@ -60,16 +71,20 @@ bool send_data(int sock, struct addrinfo* dest_addr,
     std::cout << "Enviando " << message.size() << " bytes..." << std::endl;
 
     size_t total_sent = 0;
+    // ID único para agrupar todos os fragmentos desta mensagem.
     uint8_t fragment_id = rand() % 256;
     uint8_t fragment_offset = 0;
     std::list<PendingPacket> pending_packets;
     size_t bytes_in_flight = 0;
 
+    // Loop principal: continua enquanto houver dados a enviar ou pacotes aguardando ACK.
     while (total_sent < message.size() || !pending_packets.empty()) {
         
+        // Loop de envio: preenche a janela de recepção do servidor com novos pacotes.
         while (total_sent < message.size() && bytes_in_flight < peer_window) {
             size_t chunk_size = std::min((size_t)MAX_DATA_SIZE, message.size() - total_sent);
 
+            // Garante que o envio do próximo fragmento não excederá a janela disponível.
             if (bytes_in_flight + chunk_size > peer_window) {
                 if (peer_window > bytes_in_flight) {
                     chunk_size = peer_window - bytes_in_flight;
@@ -88,6 +103,7 @@ bool send_data(int sock, struct addrinfo* dest_addr,
             data_pkt.fid = fragment_id;
             data_pkt.fo = fragment_offset;
             
+            // Define a flag ACK e, se não for o último fragmento, a flag More Bits.
             data_pkt.flags = FLAG_ACK;
             if (total_sent + chunk_size < message.size()) {
                 data_pkt.flags |= FLAG_MORE_BITS;
@@ -98,6 +114,7 @@ bool send_data(int sock, struct addrinfo* dest_addr,
             auto buf = data_pkt.serialize();
             sendto(sock, buf.data(), buf.size(), 0, dest_addr->ai_addr, dest_addr->ai_addrlen);
 
+            // Armazena o pacote enviado para possível retransmissão.
             pending_packets.push_back({data_pkt.seqnum, buf, time(nullptr)});
             
             bytes_in_flight += chunk_size;
@@ -109,6 +126,7 @@ bool send_data(int sock, struct addrinfo* dest_addr,
         std::vector<uint8_t> rbuf(1472);
         ssize_t len = recvfrom(sock, rbuf.data(), rbuf.size(), 0, nullptr, nullptr);
 
+        // Se uma resposta (ACK) for recebida, processa a confirmação.
         if (len > 0) {
             rbuf.resize(len);
             auto resp = SLOWPacket::deserialize(rbuf);
@@ -118,6 +136,7 @@ bool send_data(int sock, struct addrinfo* dest_addr,
                 peer_window = resp.window;
                 last_acknum = resp.seqnum;
                 
+                // Libera da lista de pendentes os pacotes que foram confirmados.
                 auto it = pending_packets.begin();
                 while(it != pending_packets.end()) {
                     if (it->seqnum <= resp.acknum) {
@@ -128,7 +147,7 @@ bool send_data(int sock, struct addrinfo* dest_addr,
                     }
                 }
             }
-        } else {
+        } else { // Se não houver resposta (timeout), retransmite os pacotes pendentes.
             std::cout << "  > Timeout! Retransmitindo pacotes pendentes..." << std::endl;
             for (const auto& pending : pending_packets) {
                  if (time(nullptr) - pending.sent_time > 1) {
@@ -150,6 +169,7 @@ void disconnect(int sock, struct addrinfo* dest_addr,
     SLOWPacket disc_pkt{};
     disc_pkt.sid = session_sid;
     disc_pkt.sttl = session_sttl;
+    // Conforme especificação, a combinação das flags Connect, Revive e Ack sinaliza um Disconnect.
     disc_pkt.flags = FLAG_CONNECT | FLAG_REVIVE | FLAG_ACK;
     disc_pkt.seqnum = next_seqnum;
     disc_pkt.acknum = last_acknum;
@@ -161,7 +181,7 @@ void disconnect(int sock, struct addrinfo* dest_addr,
 
 
 int main(int argc, char* argv[]) {
-    std::cout << "=== SLOW Peripheral v1.4 (Envio, fragmentação e Desconnect) ===" << std::endl;
+    std::cout << "=== SLOW Peripheral v2.0 ===" << std::endl;
     if (argc < 2 || argc > 3) {
         std::cerr << "Uso: " << argv[0] << " <host> [porta]" << std::endl;
         return 1;
@@ -170,6 +190,7 @@ int main(int argc, char* argv[]) {
     const char* host = argv[1];
     const char* port = (argc == 3 ? argv[2] : "7033");
 
+    // Configuração inicial do socket e resolução de endereço.
     struct addrinfo hints{}, *res, *rp;
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_DGRAM;
@@ -229,7 +250,7 @@ int main(int argc, char* argv[]) {
             std::cout << "Resposta recebida:" << std::endl;
             try {
                 auto resp = SLOWPacket::deserialize(rbuf);
-                // Verifica se é uma resposta de ACCEPT válida
+                // Verifica se é uma resposta de ACCEPT válida (bit de aceite ligado).
                 if (resp.flags & FLAG_ACCEPT_REJECT) {
                     std::cout << "Conexão ACEITA pelo Central (passo 2/3 do handshake)." << std::endl;
                     session_sid = resp.sid;
