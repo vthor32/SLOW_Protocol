@@ -17,6 +17,7 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
   /usr/include/c++/14/bit \
   /usr/include/c++/14/bits/algorithmfwd.h \
   /usr/include/c++/14/bits/alloc_traits.h \
+  /usr/include/c++/14/bits/allocated_ptr.h \
   /usr/include/c++/14/bits/allocator.h \
   /usr/include/c++/14/bits/basic_ios.h \
   /usr/include/c++/14/bits/basic_ios.tcc \
@@ -39,6 +40,7 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
   /usr/include/c++/14/bits/invoke.h \
   /usr/include/c++/14/bits/ios_base.h \
   /usr/include/c++/14/bits/istream.tcc \
+  /usr/include/c++/14/bits/list.tcc \
   /usr/include/c++/14/bits/locale_classes.h \
   /usr/include/c++/14/bits/locale_classes.tcc \
   /usr/include/c++/14/bits/locale_conv.h \
@@ -72,6 +74,7 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
   /usr/include/c++/14/bits/stl_iterator.h \
   /usr/include/c++/14/bits/stl_iterator_base_funcs.h \
   /usr/include/c++/14/bits/stl_iterator_base_types.h \
+  /usr/include/c++/14/bits/stl_list.h \
   /usr/include/c++/14/bits/stl_pair.h \
   /usr/include/c++/14/bits/stl_tempbuf.h \
   /usr/include/c++/14/bits/stl_uninitialized.h \
@@ -102,6 +105,7 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
   /usr/include/c++/14/debug/assertions.h \
   /usr/include/c++/14/debug/debug.h \
   /usr/include/c++/14/exception \
+  /usr/include/c++/14/ext/aligned_buffer.h \
   /usr/include/c++/14/ext/alloc_traits.h \
   /usr/include/c++/14/ext/atomicity.h \
   /usr/include/c++/14/ext/numeric_traits.h \
@@ -114,6 +118,7 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
   /usr/include/c++/14/iosfwd \
   /usr/include/c++/14/iostream \
   /usr/include/c++/14/istream \
+  /usr/include/c++/14/list \
   /usr/include/c++/14/locale \
   /usr/include/c++/14/new \
   /usr/include/c++/14/ostream \
@@ -270,13 +275,9 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/lib/linux/uapi/x86/asm/bitsperlong.h:
 
-/usr/include/c++/14/system_error:
+/usr/include/x86_64-linux-gnu/sys/types.h:
 
-/usr/include/c++/14/cstdlib:
-
-/usr/include/c++/14/string_view:
-
-/usr/include/c++/14/bits/cxxabi_init_exception.h:
+/usr/include/x86_64-linux-gnu/sys/time.h:
 
 /usr/include/c++/14/stdexcept:
 
@@ -287,6 +288,10 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 /usr/include/c++/14/pstl/pstl_config.h:
 
 /usr/include/c++/14/bits/std_abs.h:
+
+/usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h:
+
+/usr/include/x86_64-linux-gnu/gnu/stubs.h:
 
 /usr/include/x86_64-linux-gnu/bits/environments.h:
 
@@ -338,11 +343,7 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/c++/14/bits/version.h:
 
-/usr/include/c++/14/string:
-
 /usr/include/c++/14/bits/uses_allocator_args.h:
-
-/usr/include/c++/14/tuple:
 
 /usr/include/c++/14/bits/streambuf_iterator.h:
 
@@ -355,6 +356,12 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 /usr/include/x86_64-linux-gnu/bits/endianness.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/wint_t.h:
+
+/usr/include/c++/14/bits/stl_list.h:
+
+/home/kali/Documents/SLOW_Protocol/src/slow_packet.hpp:
+
+/usr/include/x86_64-linux-gnu/bits/confname.h:
 
 /usr/include/c++/14/bits/stl_iterator_base_types.h:
 
@@ -384,11 +391,13 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/c++/14/bits/stl_algo.h:
 
-/usr/include/c++/14/concepts:
+/usr/include/x86_64-linux-gnu/bits/wordsize.h:
 
-/usr/include/c++/14/bits/exception.h:
+/usr/include/c++/14/exception:
 
-/usr/include/c++/14/cctype:
+/usr/include/c++/14/bits/refwrap.h:
+
+/usr/include/c++/14/bits/range_access.h:
 
 /usr/include/c++/14/bits/cxxabi_forced.h:
 
@@ -399,6 +408,10 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 /usr/include/c++/14/bits/cpp_type_traits.h:
 
 /usr/include/x86_64-linux-gnu/bits/timesize.h:
+
+/usr/include/c++/14/cstdlib:
+
+/usr/include/c++/14/system_error:
 
 /usr/include/asm-generic/posix_types.h:
 
@@ -442,12 +455,6 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/c++/14/array:
 
-/usr/include/c++/14/fstream:
-
-/usr/include/rpc/netdb.h:
-
-/usr/include/c++/14/bits/char_traits.h:
-
 /usr/include/c++/14/algorithm:
 
 /usr/include/c++/14/istream:
@@ -456,15 +463,23 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/c++/14/bits/fstream.tcc:
 
-/usr/include/c++/14/type_traits:
+/usr/include/c++/14/cctype:
 
-/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
+/usr/include/c++/14/bits/exception.h:
+
+/usr/include/c++/14/list:
+
+/usr/include/c++/14/bits/char_traits.h:
 
 /usr/include/c++/14/cstdint:
 
 /usr/include/c++/14/bits/stl_function.h:
 
 /usr/include/c++/14/bits/predefined_ops.h:
+
+/usr/include/c++/14/bits/cxxabi_init_exception.h:
+
+/usr/include/c++/14/string_view:
 
 /usr/include/c++/14/ext/atomicity.h:
 
@@ -484,6 +499,8 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/c++/14/backward/binders.h:
 
+/usr/include/c++/14/concepts:
+
 /usr/include/x86_64-linux-gnu/bits/locale.h:
 
 /usr/include/c++/14/cwctype:
@@ -494,9 +511,9 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/c++/14/bits/invoke.h:
 
-/usr/include/c++/14/bits/vector.tcc:
-
 /usr/lib/gcc/x86_64-linux-gnu/14/include/stddef.h:
+
+/usr/include/c++/14/bits/vector.tcc:
 
 /usr/include/x86_64-linux-gnu/bits/unistd_ext.h:
 
@@ -520,6 +537,8 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/c++/14/bits/concept_check.h:
 
+/usr/include/c++/14/ext/aligned_buffer.h:
+
 /home/kali/Documents/SLOW_Protocol/src/main.cpp:
 
 /usr/include/c++/14/bits/ostream.tcc:
@@ -528,6 +547,12 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/c++/14/bits/ostream_insert.h:
 
+/usr/include/c++/14/fstream:
+
+/usr/include/rpc/netdb.h:
+
+/usr/include/c++/14/bits/list.tcc:
+
 /usr/include/c++/14/bits/locale_classes.h:
 
 /usr/include/c++/14/bits/stl_bvector.h:
@@ -535,8 +560,6 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 /usr/include/c++/14/bits/new_allocator.h:
 
 /usr/include/c++/14/bits/stringfwd.h:
-
-/usr/include/x86_64-linux-gnu/sys/time.h:
 
 /usr/include/c++/14/bits/exception_ptr.h:
 
@@ -578,13 +601,13 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/c++/14/bits/quoted_string.h:
 
-/usr/include/c++/14/bits/range_access.h:
+/usr/include/c++/14/string:
 
-/usr/include/x86_64-linux-gnu/bits/wordsize.h:
+/usr/include/c++/14/tuple:
 
-/usr/include/c++/14/exception:
+/usr/include/c++/14/type_traits:
 
-/usr/include/c++/14/bits/refwrap.h:
+/usr/include/x86_64-linux-gnu/bits/waitstatus.h:
 
 /usr/include/c++/14/typeinfo:
 
@@ -626,10 +649,6 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/x86_64-linux-gnu/bits/atomic_wide_counter.h:
 
-/home/kali/Documents/SLOW_Protocol/src/slow_packet.hpp:
-
-/usr/include/x86_64-linux-gnu/bits/confname.h:
-
 /usr/include/x86_64-linux-gnu/bits/floatn.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/struct_itimerspec.h:
@@ -641,6 +660,8 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 /usr/include/time.h:
 
 /usr/include/x86_64-linux-gnu/bits/getopt_posix.h:
+
+/usr/include/c++/14/bits/allocated_ptr.h:
 
 /usr/include/x86_64-linux-gnu/bits/in.h:
 
@@ -712,11 +733,11 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/x86_64-linux-gnu/bits/wctype-wchar.h:
 
+/usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h:
+
 /usr/include/c++/14/pstl/execution_defs.h:
 
 /usr/include/asm-generic/bitsperlong.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/14/include/stdarg.h:
 
 /usr/include/x86_64-linux-gnu/bits/types/sigset_t.h:
 
@@ -772,8 +793,6 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/messages_members.h:
 
-/usr/include/x86_64-linux-gnu/sys/types.h:
-
 /usr/lib/linux/uapi/x86/asm/socket.h:
 
 /usr/include/x86_64-linux-gnu/c++/14/bits/time_members.h:
@@ -787,7 +806,3 @@ CMakeFiles/slow_peripheral.dir/src/main.cpp.o: /home/kali/Documents/SLOW_Protoco
 /usr/include/x86_64-linux-gnu/bits/types/struct_iovec.h:
 
 /usr/include/x86_64-linux-gnu/sys/socket.h:
-
-/usr/include/x86_64-linux-gnu/gnu/stubs.h:
-
-/usr/lib/gcc/x86_64-linux-gnu/14/include/stdint.h:
