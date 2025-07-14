@@ -6,13 +6,7 @@ O SLOW também utiliza o UDP como infraestrutura para troca de mensagens e adici
 Este trabalho implementa o periférico em C++.
 
 
-## Autor
-
-  * **Vitor Marçal Brasil** (N°USP: 12822653)
-
 ## Estrutura do Código
-
-O código está organizado de modo a separar as responsabilidades:
 
   * `slow_packet.hpp`: Define a estrutura de um pacote SLOW (`struct SLOWPacket`) e a `enum` de flags. Contém toda a lógica de **serialização** (converter a struct para bytes para envio) e **desserialização** (converter bytes recebidos de volta para a struct).
   * `main.cpp`: Contém a lógica principal da aplicação. É responsável por configurar o socket UDP, gerenciar o estado da sessão e orquestrar o fluxo do protocolo:
@@ -22,9 +16,7 @@ O código está organizado de modo a separar as responsabilidades:
 
 ## Funcionalidades Implementadas
 
-O peripheral implementa todas as funcionalidades exigidas pela especificação:
-
-  - **Conexão com Handshake de 3 Vias:** Estabelece uma sessão com o servidor de forma confiável.
+  - **Conexão Three-Way-Handshake:** Estabelece uma sessão com o servidor de forma confiável.
   - **Transmissão de Dados Confiável:** Garante a entrega de dados através de confirmações (ACKs) e retransmissão em caso de timeouts.
   - **Fragmentação de Pacotes:** Divide mensagens maiores que 1440 bytes em múltiplos pacotes, utilizando os campos `fid`, `fo` e a flag `More Bits`.
   - **Controle de Fluxo com Janela Deslizante:** Respeita a janela de recepção informada pelo servidor para evitar congestionamento.
@@ -32,7 +24,7 @@ O peripheral implementa todas as funcionalidades exigidas pela especificação:
 
 ## Como Compilar
 
-O projeto utiliza `CMake` para gerar os arquivos de compilação. Assumindo que você tenha `g++`, `cmake` e `make` instalados, siga os passos a partir do diretório raiz do projeto:
+ Assumindo que você tenha `g++`, `cmake` e `make` instalados, siga os passos a partir do diretório raiz do projeto com CMake para gerar os arquivos de compilação:
 
 ```shell
 # 1. Crie um diretório de build (se não existir) e entre nele
