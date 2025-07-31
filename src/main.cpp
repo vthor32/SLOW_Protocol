@@ -1,7 +1,6 @@
 /**
  * Projeto: SLOW Peripheral Protocol
  * Autor: Vitor Marçal Brasil
- * N°USP: 12822653
  * Curso: Sistemas de Informação - ICMC/USP São Carlos
  * Data: Julho de 2025
  */
